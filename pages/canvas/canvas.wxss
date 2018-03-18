@@ -1,0 +1,13 @@
+/* pages/canvas/canvas.wxss */
+
+text {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.wrap {
+  width: 90%;
+  margin: 30rpx auto;
+  border: 1px #ccc solid;
+}

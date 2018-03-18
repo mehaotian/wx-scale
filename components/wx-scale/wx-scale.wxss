@@ -1,0 +1,50 @@
+/* pages/test/test.wxss */
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  background: #dbdbdb;
+}
+
+.zz {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 0px;
+  /* height: 40px; */
+  margin: auto;
+  border: 1px #52b8f5 solid;
+  z-index: 999;
+}
+
+.scroll-wrapper {
+  display: flex;
+}
+
+.scale-image {
+  flex-shrink: 0;
+  height: 70px;
+  box-sizing: border-box;
+  /* border: 1px red solid; */
+}
+
+.scale-image image {
+   width: 100%; 
+   height: 100%; 
+}
+
+.seat {
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.canvas {
+  position: absolute;
+  overflow: hidden;
+  box-sizing: border-box;
+  top: -100%;
+  left:0;
+  z-index: -1;
+}

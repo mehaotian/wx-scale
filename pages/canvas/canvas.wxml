@@ -1,0 +1,24 @@
+<!--
+min [number] 默认值 0, // 最小值
+max[number] 默认值 100, // 最大值
+int[boolean] 默认值 true, // 是否开启整数模式 ，false为小数模式  整数模式 step最小单位是 1 ，小数模式，step的最小单位是 0.1
+step[number] 默认值 1, // 步长，相对传入的值，每个格子代表几个值（值只能是能被10整除的 整数 ，1，2，5）
+fiexNum[number] 默认值 60, // 刻度尺左右余量
+single[number] 默认值 10, // 单个格子的实际长度（单位px）
+h[number] 默认值 0,// 自定义高度 初始值为80
+active [null] 默认值 center ，// 自定义选中位置  （三个值 min, max ,center , 范围内合法数值）
+styles [object]  // 自定义卡尺颜色  注意： 仅支持 #dbdbdb  或者red  这种 颜色 不支持简写 如 #333
+默认值： {
+                  line: '#dbdbdb',   // 刻度颜色
+                  bginner: '#fbfbfb',  // 前景色颜色
+                  bgoutside: '#dbdbdb',  // 背景色颜色
+                  lineSelect: '#52b8f5',  // 选中线颜色
+                  font: '#404040'   // 刻度数字颜色
+                }
+      
+  -->
+ <text>刻度{{value}}</text> 
+
+<view class='wrap'>
+  <scale min="0" max="100" int="{{true}}" step="1" fiexNum="60" single="10" h="50" active="center" styles="{{styles}}" bindvalue="bindvalue"></scale>
+</view>

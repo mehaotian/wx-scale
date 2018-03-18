@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "scale":"/components/wx-scale/wx-scale"
+  }
+}

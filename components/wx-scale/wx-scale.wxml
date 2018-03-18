@@ -1,0 +1,15 @@
+<view id='scale-wrapper' class='wrapper' style='background:{{bgoutside}}'>
+  <view class='zz' style='height:{{h/2}}px;border:1px {{lineSelect}} solid;'></view>
+  <scroll-view scroll-x="true" scroll-left="{{centerNum}}" scroll-with-animation='true' catchscroll="bindscroll">
+    <view id='canvas' class='scroll-wrapper'>
+      <view class='seat' style='width:{{windowWidth/2- fiexNum/2}}px;'></view>
+      <view class="scale-image" style='width:{{width}}px; height:{{h}}px'>
+        <image src='{{ruler}}' mode=''></image>
+      </view>
+      <view class='seat' style='width:{{windowWidth/2-fiexNum/2}}px;'></view>
+    </view>
+  </scroll-view>
+</view>
+<view class='canvas' style='width:{{width}}px;'>
+  <canvas class='canvas' style='width:{{width}}px;' canvas-id="canvas"></canvas>
+</view>
