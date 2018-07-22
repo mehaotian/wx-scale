@@ -19,6 +19,12 @@ styles [object]  // 自定义卡尺颜色  注意： 仅支持 #dbdbdb  或者re
   -->
  <text>刻度{{value}}</text> 
 
+<!-- <view class='wrap'>
+  <scale min="0" max="100" int="{{true}}" step="1" fiexNum="60" single="10" h="50" active="center" styles="{{styles[0]}}" bindvalue="bindvalue"></scale>
+</view> -->
+
 <view class='wrap'>
-  <scale min="0" max="100" int="{{true}}" step="1" fiexNum="60" single="10" h="50" active="center" styles="{{styles}}" bindvalue="bindvalue"></scale>
+  <scale min="0" max="100" int="{{true}}" step="1" fiexNum="60" single="10" h="50" active="center" styles="{{styles[0]}}" bindvalue="bindvalue"></scale>
+  <scale min="0" max="100" int="{{true}}" step="1" fiexNum="60" single="10" h="50" active="center" styles="{{styles[1]}}" bindvalue=""></scale>
+  <scale min="0" max="100" int="{{true}}" step="1" fiexNum="60" single="10" h="50" active="center" styles="{{styles[1]}}" bindvalue="bindvalue"></scale>
 </view>
