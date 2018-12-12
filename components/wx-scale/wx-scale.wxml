@@ -11,5 +11,5 @@
   </scroll-view>
 </view>
 <view class='canvas' style='width:{{width}}px;'>
-  <canvas class='canvas' style='width:{{width}}px;' canvas-id="canvas"></canvas>
+  <canvas class='canvas' style='width:{{width}}px;' canvas-id="{{scaleId}}"></canvas>
 </view>

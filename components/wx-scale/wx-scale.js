@@ -80,10 +80,14 @@ Component({
     fiexNum: '',
     bgoutside: '#dbdbdb',
     lineSelect: '#52b8f5',
+    scaleId:''
   },
   ready() {
     // 每次初始化 全局变量
     self = this;
+    this.setData({
+      scaleId: this.id
+    })
     this._init()
   },
 
@@ -138,49 +142,48 @@ Component({
           ctx.stroke()
         }
       }
-      ctx.draw(true, () => {
-        setTimeout(() => {
-          wx.canvasToTempFilePath({
-            x: 0,
-            y: 0,
-            width: total,
-            height: canvasHeight,
-            // destWidth: total * 4,
-            // destHeight: canvasHeight * 4,
-            canvasId: 'canvas',
-            success: function (res) {
-              // 改变高度重新计算
-              rul.total = rul.total / 80 * rul.h
-              rul.FIXED_NUM = rul.FIXED_NUM / 80 * rul.h
-              let centerNum = self.data.int ?
-                ((rul.active - rul.minNum) / rul.step) *
-                parseInt(rul.total - rul.FIXED_NUM) / rul.num * rul.step :
-                ((rul.active - rul.minNum) * 10 / rul.step) *
-                parseFloat((rul.total - rul.FIXED_NUM)) / rul.num / (rul.single / rul.step)
-              self.setData({
-                ruler: res.tempFilePath,
-                centerNum,
-                width: rul.total,
-                h: rul.h,
-                fiexNum: rul.FIXED_NUM,
-                round: self.data.int ? rul.minNum : rul.minNum.toFixed(1),
-                bgoutside: rul.styles.bgoutside,
-                lineSelect: rul.styles.lineSelect,
-              })
-              self.triggerEvent('value', { value: self.data.round })
-            },
-            fail(e) {
-              console.log(e)
-            }
-          }, this)
-        }, 300)
-
-      });
+      ctx.draw(true, setTimeout(() => {
+        wx.canvasToTempFilePath({
+          x: 0,
+          y: 0,
+          width: total,
+          height: canvasHeight,
+          // destWidth: total * 4,
+          // destHeight: canvasHeight * 4,
+          canvasId: this.data.scaleId,
+          success: (res) => {
+            // 改变高度重新计算
+            rul.total = rul.total / 80 * rul.h
+            rul.FIXED_NUM = rul.FIXED_NUM / 80 * rul.h
+            let centerNum = self.data.int ?
+              ((rul.active - rul.minNum) / rul.step) *
+              parseInt(rul.total - rul.FIXED_NUM) / rul.num * rul.step :
+              ((rul.active - rul.minNum) * 10 / rul.step) *
+              parseFloat((rul.total - rul.FIXED_NUM)) / rul.num / (rul.single / rul.step)
+            self.setData({
+              ruler: res.tempFilePath,
+              centerNum,
+              width: rul.total,
+              h: rul.h,
+              fiexNum: rul.FIXED_NUM,
+              round: self.data.int ? rul.minNum : rul.minNum.toFixed(1),
+              bgoutside: rul.styles.bgoutside,
+              lineSelect: rul.styles.lineSelect,
+            })
+            self.triggerEvent('value', {
+              value: self.data.round
+            })
+          },
+          fail(e) {
+            console.log(e)
+          }
+        }, this)
+      }, 500));
     },
     /**
      * 获取滑动的值
      */
-    bindscroll: function (e) {
+    bindscroll: function(e) {
       // 移动距离
       let left = e.detail.scrollLeft;
       // 单格的实际距离
@@ -200,7 +203,9 @@ Component({
       self.setData({
         round: resultNum
       })
-      self.triggerEvent('value', { value: resultNum })
+      self.triggerEvent('value', {
+        value: resultNum
+      })
       clearTimeout(rul.Timer);
       rul.Timer = setTimeout(() => {
         // console.log("执行了定时器")
@@ -208,11 +213,13 @@ Component({
           centerNum: redNum,
           round: resultNum
         })
-        self.triggerEvent('value', { value: resultNum })
+        self.triggerEvent('value', {
+          value: resultNum
+        })
 
       }, 200)
     },
-    /**
+    /** 
      * 初始化卡尺
      */
     _init() {
@@ -222,7 +229,7 @@ Component({
         minNum: self.data.min,
         maxNum: self.data.max,
         num: self.data.max - self.data.min, // 仿数据总数
-        FIXED_NUM: self.data.fiexNum,// 标尺左右空余部分
+        FIXED_NUM: self.data.fiexNum, // 标尺左右空余部分
         single: self.data.single,
         step: self.data.step,
         h: self.data.h,
@@ -230,12 +237,12 @@ Component({
         styles: self.data.styles
       }
       self._getErro(rul)
-      ctx = wx.createCanvasContext('canvas', this);
+      ctx = wx.createCanvasContext(this.data.scaleId, this);
       //  获取节点信息，获取节点宽度
       var query = wx.createSelectorQuery().in(this)
-      query.select('#scale-wrapper').boundingClientRect(function (res) {
+      query.select('#scale-wrapper').boundingClientRect((res) => {
         res.top // 这个组件内 #the-id 节点的上边界坐标
-      }).exec(function (e) {
+      }).exec((e) => {
         // 获节点宽度
         rul.windowWidth = e[0].width;
         // 判断是否使用整数类型
@@ -247,12 +254,12 @@ Component({
         // 设置单个格子的长度
         rul.spa = rul.single * rul.step;
         rul.total = rul.spa * rul.unitNum + rul.FIXED_NUM
-        self.draw(rul.num, rul.total);
         self.setData({
           windowWidth: e[0].width,
           width: rul.total,
           fiexNum: rul.FIXED_NUM
         })
+        self.draw(rul.num, rul.total);
       })
     },
     /**

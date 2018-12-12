@@ -1,6 +1,7 @@
 Page({
   data: {
     value: 0,
+    value2:0,
     styles: [{
       line: '#dbdbdb',
       bginner: '#fbfbfb',
@@ -19,6 +20,12 @@ Page({
     // console.log(e)
     this.setData({
       value: e.detail.value
+    })
+  },
+  bindvalue2: function (e) {
+    // console.log(e)
+    this.setData({
+      value2: e.detail.value
     })
   }
 })
