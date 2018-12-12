@@ -1,15 +1,3 @@
-/**
- * ctx ： canvas 画布对象
- */
-// let config = {
-//   min: 0, // 最小值
-//   max: 100, // 最大值
-//   int: true, // 是否开启整数模式
-//   step: 2, // 步长
-//   fiexNum: 60, // 刻度尺左右余量
-//   single: 10, // 单个格子的实际长度
-//   h: 50,// 自定义高度 初始值为80
-// }
 
 Component({
   /**
@@ -54,7 +42,18 @@ Component({
     // 当前选中 
     active: {
       type: null,
-      value: '120'
+      value: '0',
+      observer(newVal, oldVal, changedPath) {
+        console.log(oldVal)
+        let rul = this.data.rul
+        rul.active = newVal
+        console.log(newVal, 'new')
+        let centerNum = this.assignValue(this, rul)
+        this.setData({
+          centerNum,
+          rul
+        })
+      }
     },
     styles: {
       type: Object,
@@ -78,7 +77,8 @@ Component({
     bgoutside: '#dbdbdb',
     lineSelect: '#52b8f5',
     scaleId: '',
-    rul: {}
+    rul: {},
+    assingOldVal: -1
   },
   ready() {
     // 每次初始化 全局变量
@@ -152,11 +152,12 @@ Component({
             // 改变高度重新计算
             rul.total = rul.total / 80 * rul.h
             rul.FIXED_NUM = rul.FIXED_NUM / 80 * rul.h
-            let centerNum = self.data.int ?
-              ((rul.active - rul.minNum) / rul.step) *
-              parseInt(rul.total - rul.FIXED_NUM) / rul.num * rul.step :
-              ((rul.active - rul.minNum) * 10 / rul.step) *
-              parseFloat((rul.total - rul.FIXED_NUM)) / rul.num / (rul.single / rul.step)
+            // let centerNum = self.data.int ?
+            //   ((rul.active - rul.minNum) / rul.step) *
+            //   parseInt(rul.total - rul.FIXED_NUM) / rul.num * rul.step :
+            //   ((rul.active - rul.minNum) * 10 / rul.step) *
+            //   parseFloat((rul.total - rul.FIXED_NUM)) / rul.num / (rul.single / rul.step)
+            let centerNum = this.assignValue(this, rul)
             self.setData({
               ruler: res.tempFilePath,
               centerNum,
@@ -198,8 +199,10 @@ Component({
       let redNum = Math.round(resultNum * spa)
       // 小数位处理
       resultNum = this.data.int ? resultNum * rul.step + rul.minNum : ((resultNum * rul.step) / 10 + rul.minNum).toFixed(1)
+      if (this.data.assingOldVal === resultNum) return
       this.setData({
-        round: resultNum
+        round: resultNum,
+        assingOldVal: resultNum
       })
       this.triggerEvent('value', {
         value: resultNum
@@ -209,7 +212,9 @@ Component({
         // console.log("执行了定时器")
         this.setData({
           centerNum: redNum,
-          round: resultNum
+          round: resultNum,
+          active: resultNum,
+          assingOldVal: resultNum
         })
         this.triggerEvent('value', {
           value: resultNum
@@ -363,6 +368,13 @@ Component({
           rul.styles.font = '#404040'
         }
       }
+    },
+    assignValue(self, rul) {
+      return self.data.int ?
+        ((rul.active - rul.minNum) / rul.step) *
+        parseInt(rul.total - rul.FIXED_NUM) / rul.num * rul.step :
+        ((rul.active - rul.minNum) * 10 / rul.step) *
+        parseFloat((rul.total - rul.FIXED_NUM)) / rul.num / (rul.single / rul.step)
     }
   }
 })
