@@ -10,9 +10,6 @@
 //   single: 10, // 单个格子的实际长度
 //   h: 50,// 自定义高度 初始值为80
 // }
-let rul = {};
-let ctx = null;
-let self = null;
 
 Component({
   /**
@@ -80,14 +77,11 @@ Component({
     fiexNum: '',
     bgoutside: '#dbdbdb',
     lineSelect: '#52b8f5',
-    scaleId:''
+    scaleId: '',
+    rul: {}
   },
   ready() {
     // 每次初始化 全局变量
-    self = this;
-    this.setData({
-      scaleId: this.id
-    })
     this._init()
   },
 
@@ -99,9 +93,12 @@ Component({
      * 绘制
      * 生成卡尺
      */
-    draw(num, total) {
-      // let total = rul.width;
+    draw(num, total, {
+      self,
+      rul
+    }) {
       let canvasHeight = 80;
+      let ctx = wx.createCanvasContext('canvas', self);
       //  绘制背景
       ctx.save()
       ctx.setFillStyle(rul.styles.bginner)
@@ -150,7 +147,7 @@ Component({
           height: canvasHeight,
           // destWidth: total * 4,
           // destHeight: canvasHeight * 4,
-          canvasId: this.data.scaleId,
+          canvasId: 'canvas',
           success: (res) => {
             // 改变高度重新计算
             rul.total = rul.total / 80 * rul.h
@@ -184,12 +181,13 @@ Component({
      * 获取滑动的值
      */
     bindscroll: function(e) {
+      let rul = this.data.rul
       // 移动距离
       let left = e.detail.scrollLeft;
       // 单格的实际距离
       let spa;
       // 判断是否是整数
-      if (self.data.int) {
+      if (this.data.int) {
         spa = parseInt(rul.total - rul.FIXED_NUM) / rul.num * rul.step;
       } else {
         spa = parseFloat(rul.total - rul.FIXED_NUM) / rul.num / (rul.single / rul.step);
@@ -199,21 +197,21 @@ Component({
       // 还原为实际数值
       let redNum = Math.round(resultNum * spa)
       // 小数位处理
-      resultNum = self.data.int ? resultNum * rul.step + rul.minNum : ((resultNum * rul.step) / 10 + rul.minNum).toFixed(1)
-      self.setData({
+      resultNum = this.data.int ? resultNum * rul.step + rul.minNum : ((resultNum * rul.step) / 10 + rul.minNum).toFixed(1)
+      this.setData({
         round: resultNum
       })
-      self.triggerEvent('value', {
+      this.triggerEvent('value', {
         value: resultNum
       })
       clearTimeout(rul.Timer);
       rul.Timer = setTimeout(() => {
         // console.log("执行了定时器")
-        self.setData({
+        this.setData({
           centerNum: redNum,
           round: resultNum
         })
-        self.triggerEvent('value', {
+        this.triggerEvent('value', {
           value: resultNum
         })
 
@@ -223,23 +221,23 @@ Component({
      * 初始化卡尺
      */
     _init() {
-      rul = {
+      let self = this
+      let rul = {
         spa: '', // 单个格子的距离
         unitNum: '', // 格子总数
-        minNum: self.data.min,
-        maxNum: self.data.max,
-        num: self.data.max - self.data.min, // 仿数据总数
-        FIXED_NUM: self.data.fiexNum, // 标尺左右空余部分
-        single: self.data.single,
-        step: self.data.step,
-        h: self.data.h,
+        minNum: this.data.min,
+        maxNum: this.data.max,
+        num: this.data.max - this.data.min, // 仿数据总数
+        FIXED_NUM: this.data.fiexNum, // 标尺左右空余部分
+        single: this.data.single,
+        step: this.data.step,
+        h: this.data.h,
         active: '',
-        styles: self.data.styles
+        styles: this.data.styles
       }
-      self._getErro(rul)
-      ctx = wx.createCanvasContext(this.data.scaleId, this);
+      this._getErro(rul)
       //  获取节点信息，获取节点宽度
-      var query = wx.createSelectorQuery().in(this)
+      var query = this.createSelectorQuery().in(this)
       query.select('#scale-wrapper').boundingClientRect((res) => {
         res.top // 这个组件内 #the-id 节点的上边界坐标
       }).exec((e) => {
@@ -257,9 +255,13 @@ Component({
         self.setData({
           windowWidth: e[0].width,
           width: rul.total,
-          fiexNum: rul.FIXED_NUM
+          fiexNum: rul.FIXED_NUM,
+          rul
         })
-        self.draw(rul.num, rul.total);
+        self.draw(rul.num, rul.total, {
+          self,
+          rul
+        });
       })
     },
     /**
@@ -305,17 +307,17 @@ Component({
         }
       }
       // 当前选中位置设置
-      if (self.data.active === 'min') {
+      if (this.data.active === 'min') {
         rul.active = rul.minNum
-      } else if (self.data.active === 'max') {
+      } else if (this.data.active === 'max') {
         rul.active = rul.maxNum
-      } else if (self.data.active === 'center') {
+      } else if (this.data.active === 'center') {
         rul.active = (rul.maxNum + rul.minNum) / 2
       } else {
-        rul.active = self.data.active
+        rul.active = this.data.active
       }
-      if (self.data.active !== 'min' && self.data.active !== 'max' && self.data.active !== 'center') {
-        console.log("任意数值")
+      if (this.data.active !== 'min' && this.data.active !== 'max' && this.data.active !== 'center') {
+        // console.log("任意数值")
         if (rul.active < rul.minNum || rul.active > rul.maxNum) {
           console.error('您输入的数值（active）超入范围，请检查 active')
         }

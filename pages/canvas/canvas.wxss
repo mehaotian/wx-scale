@@ -11,3 +11,10 @@ text {
   margin: 30rpx auto;
   border: 1px #ccc solid;
 }
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+  display: none;
+}
